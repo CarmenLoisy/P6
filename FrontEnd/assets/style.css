@@ -26,15 +26,10 @@ time, mark, audio, video {
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
 	display: block;
 }
-body {
-	line-height: 1;
-}
-ol,
-ul {
+ol, ul {
 	list-style: none;
 }
-blockquote,
-q {
+blockquote, q {
 	quotes: none;
 }
 blockquote:before,
@@ -62,6 +57,9 @@ body {
 	font-family: "Work Sans";
 	font-size: 14px;
 	background: #fffef8;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 header {
 	display: flex;
@@ -72,6 +70,8 @@ main {
 	display: flex;
 	flex-direction: column;
 	gap: 65px;
+	flex: 1;
+
 }
 
 h1,
@@ -94,6 +94,7 @@ h1 > span {
 }
 
 h2 {
+	text-align: center;
 	font-weight: 700;
 	font-size: 30px;
 	color: var(--main-color);
@@ -108,6 +109,7 @@ footer {
 	text-align: right;
 	padding: 20px 100px;
 	background-color: white;
+	flex-shrink: 0;
 }
 li img {
 	max-width: 22px;
@@ -145,6 +147,7 @@ li:hover {
 
 #introduction h2 {
 	margin-bottom: 1em;
+	text-align: left;
 }
 
 #introduction p {
@@ -190,32 +193,12 @@ figcaption {
 	padding-top: 10px;
 }
 /* Contact Styles */
-#contact {
-	width: 50%;
-	margin: auto;
-}
-
-#contact > * {
+#contact p {
 	text-align: center;
 }
 
 #contact h2 {
 	margin-bottom: 20px;
-}
-
-#contact form {
-	text-align: left;
-	margin-top: 30px;
-	display: flex;
-	flex-direction: column;
-}
-
-#contact input,
-#contact textarea {
-	height: 50px;
-	font-size: 1.2em;
-	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
 input[type="submit"] {
@@ -274,4 +257,26 @@ label {
 	top: 12px;
 	left: -45px;
 	cursor: pointer;
+}
+
+/* page login */
+form {
+    margin: 0 auto;
+		display: flex;
+	flex-direction: column;
+	width: fit-content;
+}
+
+input,
+textarea {
+	border-style: none;
+	box-shadow: 0px 4px 14px 0px #00000017;
+	min-height: 51px;
+	width: 379px;
+}
+a,
+a:visited {
+	text-align: center;
+	color: black;
+	text-decoration: none;
 }
