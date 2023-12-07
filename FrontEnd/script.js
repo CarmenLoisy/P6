@@ -1,7 +1,7 @@
 // Récupération des travaux depuis le back-end
-const url = "http://localhost:5678/api/works";
+const urlWorks = "http://localhost:5678/api/works"
 // Utilisation de fetch pour envoyer une requête GET
-fetch(url)
+fetch(urlWorks)
 	.then((response) => {
 		// Vérifier si la requête a réussi (statut 200-299)
 		if (!response.ok) {
@@ -15,7 +15,7 @@ fetch(url)
 		// Utilisation de for...of pour simplifier la boucle
 		for (const elements of data) {
 			const project = createProject(elements); //Appel de la fonction à partir des données
-			gallery.appendChild(project); //ajout dans la galerie
+			gallery.appendChild(project) //ajout dans la galerie
 		}
 	})
 function createProject(elements) {
@@ -82,3 +82,18 @@ fetch("http://localhost:5678/api/categories")
 			error
 		)
 	})
+//Authentification de l’utilisateur
+// Récupération de login depuis le back-end
+const loginUrl = "http://localhost:5678/api-docs/#/default/post_users_login"
+fetch(loginUrl)
+async function logIn(data) {
+	const loginOptions = {
+	  method: "POST",
+	  headers: {
+		"content-type": "application/json",
+	  },
+	  body: data,
+	};
+	return await (await fetch(loginUrl, loginOptions)).json();
+	console.log("test")
+  }
