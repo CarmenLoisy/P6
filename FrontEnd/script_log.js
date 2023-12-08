@@ -1,8 +1,10 @@
+console.log("sophie.bluel@test.tld")
 console.log("S0phie")
 // Sélection des éléments du DOM
 const mailInput = document.getElementById('emailInput')
 const mdpInput = document.getElementById('passwordInput')
 const sendInput = document.getElementById('send-input')
+const errorDial = document.getElementById('error-message')
 
 // URL pour l'authentification
 const loginUrl = "http://localhost:5678/api/users/login"
