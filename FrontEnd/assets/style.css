@@ -293,9 +293,9 @@ a:visited {
 	margin-top: -56px;
     align-self: center;
     margin-right: -300px;
-    display: flex;
     gap: 5px;
     flex-direction: row;
     align-items: center;
+	display: none;
 }
   

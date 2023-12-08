@@ -102,8 +102,12 @@ function isConnected() {
 	return !!sessionStorage.getItem("token") //récupère l'élément stocké sous la clé "token"
 } //L'opérateur !! convertir la valeur de retour en un booléen
 const loginLogoutButton = document.querySelector(".login_logout")
+const buttonModif = document.querySelector('.modif_button')
+const filters = document.querySelector(".filtres")
 if (isConnected()) {
 	loginLogoutButton.innerText = "Logout" //Changer le texte lorsque l'utilisateur est connecté
+	buttonModif.style.display = 'flex'
+	filters.style.display = 'none'
 	loginLogoutButton.addEventListener("click", () => {
 		sessionStorage.removeItem("token") //supprime le jeton de connexion de la session de stockage
 		window.location.replace("index.html")  //rediriger vers deconnexion
