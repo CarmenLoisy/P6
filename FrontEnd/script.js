@@ -1,5 +1,5 @@
 // Récupération des travaux depuis le back-end
-const urlWorks = "http://localhost:5678/api/works"
+const urlWorks = "http://localhost:5678/api/works";
 // Utilisation de fetch pour envoyer une requête GET
 fetch(urlWorks)
 	.then((response) => {
@@ -15,9 +15,9 @@ fetch(urlWorks)
 		// Utilisation de for...of pour simplifier la boucle
 		for (const elements of data) {
 			const project = createProject(elements); //Appel de la fonction à partir des données
-			gallery.appendChild(project) //ajout dans la galerie
+			gallery.appendChild(project); //ajout dans la galerie
 		}
-	})
+	});
 function createProject(elements) {
 	// Création des balises
 	const project = document.createElement("figure");
@@ -65,35 +65,47 @@ fetch("http://localhost:5678/api/categories")
 
 					project.style.display =
 						filterName === "Tous" || filterName === projectCategory ? "block" : "none";
-				})
+				});
 				// Mettre en surbrillance le filtre actif
-				setActiveFilter(filter)
-			})
+				setActiveFilter(filter);
+			});
 			// Mettez en surbrillance le filtre par défaut (ici, le premier filtre)
 			if (filter.classList.contains("tous")) {
-				setActiveFilter(filter)
+				setActiveFilter(filter);
 			}
-		})
+		});
 	})
 
 	.catch((error) => {
 		console.error(
 			"Une erreur s'est produite lors de la récupération des catégories : ",
 			error
-		)
-	})
+		);
+	});
 //Authentification de l’utilisateur
 // Récupération de login depuis le back-end
-const loginUrl = "http://localhost:5678/api-docs/#/default/post_users_login"
-fetch(loginUrl)
+const loginUrl = "http://localhost:5678/api-docs/#/default/post_users_login";
+fetch(loginUrl);
 async function logIn(data) {
 	const loginOptions = {
-	  method: "POST",
-	  headers: {
-		"content-type": "application/json",
-	  },
-	  body: data,
+		method: "POST",
+		headers: {
+			"content-type": "application/json",
+		},
+		body: data,
 	};
 	return await (await fetch(loginUrl, loginOptions)).json();
-	console.log("test")
-  }
+}
+
+// Vérifier l'état de connexion
+function isConnected() {
+	return !!sessionStorage.getItem("token"); //récupère l'élément stocké sous la clé "token"
+} //L'opérateur !! convertir la valeur de retour en un booléen
+const loginLogoutButton = document.querySelector(".login_logout");
+if (isConnected()) {
+	loginLogoutButton.innerText = "Logout"; //Changer le texte lorsque l'utilisateur est connecté
+	loginLogoutButton.addEventListener("click", () => {
+		sessionStorage.removeItem("token"); //supprime le jeton de connexion de la session de stockage
+		window.location.replace("index.html"); //rediriger vers deconnexion
+	})
+}

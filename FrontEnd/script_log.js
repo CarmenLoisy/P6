@@ -30,7 +30,7 @@ sendInput.addEventListener("click", async (event) => {
 		password: mdpInput.value,
 	  })
     // stocker la réponse de la fonction logIn.
-	const response = await logIn(user);//attendre que la fonction logIn soit terminée
+	const response = await logIn(user)//attendre que la fonction logIn soit terminée
     // Traitement de la réponse
     console.log(response)
     if (response.userId === 1) {// condition si (userId) est la réponse du serveur
