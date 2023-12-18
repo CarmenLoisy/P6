@@ -2,19 +2,87 @@
    v2.0 | 20110126
    License: none (public domain)
 */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -23,13 +91,25 @@ time, mark, audio, video {
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
 	display: block;
 }
-ol, ul {
+ol,
+ul {
 	list-style: none;
 }
-blockquote, q {
+blockquote,
+q {
 	quotes: none;
 }
 blockquote:before,
@@ -71,7 +151,6 @@ main {
 	flex-direction: column;
 	gap: 65px;
 	flex: 1;
-
 }
 
 h1,
@@ -212,44 +291,6 @@ input[type="submit"] {
 label {
 	padding: 40px 0 10px 0;
 }
-/* Modale Styles */
-.modaleContent,
-.modaleContent2 {
-	display: none;
-	position: fixed;
-}
-
-.bground,
-.bground2 {
-	position: fixed;
-	z-index: 1;
-	left: 0;
-	top: 0;
-	height: 100%;
-	width: 100%;
-	overflow: auto;
-	background-color: rgba(63, 63, 63, 0.4);
-	margin-top: 0;
-}
-
-.modale,
-.modale2 {
-	position: fixed;
-	background-color: white;
-	width: 430px;
-	height: 460px;
-	border-radius: 10px;
-	z-index: 2;
-}
-
-.fa-xmark,
-.xmark2 {
-	position: absolute;
-	top: 12px;
-	left: 394px;
-	cursor: pointer;
-}
-
 .fa-arrow-left {
 	position: relative;
 	top: 12px;
@@ -259,8 +300,8 @@ label {
 
 /* page login */
 form {
-    margin: 0 auto;
-		display: flex;
+	margin: 0 auto;
+	display: flex;
 	flex-direction: column;
 	width: fit-content;
 }
@@ -279,23 +320,48 @@ a:visited {
 	text-decoration: none;
 }
 #error-message {
-    display: none;
-    color: red;
+	display: none;
+	color: red;
 	text-align: center;
-    padding: 10px;
+	padding: 10px;
 }
 #portfolio {
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
-  }
-  .modif_button {
-	margin-top: -56px;
-    align-self: center;
-    margin-right: -300px;
-    gap: 5px;
-    flex-direction: row;
-    align-items: center;
-	display: none;
 }
-  
+.modif_button {
+	margin-top: -56px;
+	align-self: center;
+	margin-right: -300px;
+	gap: 5px;
+	flex-direction: row;
+	align-items: center;
+	 display: none;
+}
+/* Modale Styles */
+.modal {
+	position: fixed;
+	display: flex;	
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.3);
+}
+.modal-wrapper {
+	overflow: auto;
+	width: 630px;
+	height: 688px;
+	max-width: calc(100vw - 20px);
+	max-height: calc(100vh - 20px);
+	padding: 20px;
+	background-color: white;
+}
+.fa-xmark {
+	top: 12px;
+	left: 394px;
+	cursor: pointer;
+}

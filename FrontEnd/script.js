@@ -102,7 +102,7 @@ function isConnected() {
 	return !!sessionStorage.getItem("token") //récupère l'élément stocké sous la clé "token"
 } //L'opérateur !! convertir la valeur de retour en un booléen
 const loginLogoutButton = document.querySelector(".login_logout")
-const buttonModif = document.querySelector('.modif_button')
+const buttonModif = document.querySelector('.js-modal')
 const filters = document.querySelector(".filtres")
 if (isConnected()) {
 	loginLogoutButton.innerText = "Logout" //Changer le texte lorsque l'utilisateur est connecté
@@ -113,3 +113,37 @@ if (isConnected()) {
 		window.location.replace("index.html")  //rediriger vers deconnexion
 	})
 }
+
+let modal = null //stocker l'élément modal actuel
+
+const openModal = function (e) {
+  const targetModalId = e.currentTarget.getAttribute('href').substring(1)
+  modal = document.getElementById(targetModalId) 
+  if (modal) {
+    modal.style.display = 'flex' 
+    modal.removeAttribute('aria-hidden') 
+    modal.setAttribute('aria-modal', 'true') 
+    modal.addEventListener('click', closeModal) 
+    modal.querySelector('.fa-xmark').addEventListener('click', closeModal) 
+    modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation) 
+  }
+} 
+
+const closeModal = function (e) {
+  if (!modal) return 
+  modal.style.display = 'none' 
+  modal.setAttribute('aria-hidden', 'true') 
+  modal.removeAttribute('aria-modal') 
+  modal.removeEventListener('click', closeModal) 
+  modal.querySelector('.fa-xmark').removeEventListener('click', closeModal) 
+  modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation) 
+  modal = null 
+} 
+
+const stopPropagation = function (e) {
+  e.stopPropagation() 
+} 
+
+document.querySelectorAll('.js-modal').forEach(a => {
+  a.addEventListener('click', openModal) 
+}) 

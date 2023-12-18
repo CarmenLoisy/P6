@@ -24,6 +24,17 @@
 	</nav>
 </header>
 <main>
+	<aside id="modal1" class="modal" aria-hidden="true" role="dialog" aria-labelledby="titlemodal" style="display: none;">
+		<div class="modal-wrapper js-modal-stop">
+			<i class="fa-solid fa-xmark"></i>
+			<h3 id="titlemodal">Galerie photo</h3>
+			<div class="project-modale"></div>
+			<button class="button1">
+				<span>Ajouter une photo</span>
+			</button>
+		</div>
+	</aside>
+	
 	<div id="introduction">
 		<figure>
 			<img src="./assets/images/sophie-bluel.png" alt="">
@@ -37,10 +48,10 @@
 	</div>
 	<section id="portfolio">
 		<h2>Mes Projets</h2> 
-		<div class="modif_button">
-			<i class="fa-solid fa-pen-to-square fa-sm modif_icon1"></i>
-			<p>modifier</p>
-		</div>
+			<a href="#modal1" class="js-modal modif_button">
+				<i class="fa-solid fa-pen-to-square"></i>
+				<p>modifier</p>
+			</a>
 		<div class="filtres">
 			<div class="tous"><p>Tous</p></div>
 			<div class="objets"><p>Objets</p></div>
