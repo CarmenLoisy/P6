@@ -147,3 +147,77 @@ const stopPropagation = function (e) {
 document.querySelectorAll('.js-modal').forEach(a => {
   a.addEventListener('click', openModal) 
 }) 
+
+//Affichage des projets dans la modale
+
+fetch("http://localhost:5678/api/works")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Erreur de requête réseau') 
+    }
+    return response.json() 
+  })
+  .then(data => {
+    const galleryModale = document.querySelector(".project-modale") 
+
+    const createProjectElement = (elements) => {
+      const projectModale = document.createElement("figure") 
+      const img = document.createElement("img") 
+      img.src = elements.imageUrl 
+
+      projectModale.appendChild(img) 
+      galleryModale.appendChild(projectModale) 
+
+      projectModale.classList.add("project") 
+      projectModale.setAttribute("data-category", elements.category.name) 
+
+      const createTrashIcon = () => {
+        const corbeille = document.createElement("i") 
+        corbeille.classList.add("fa-solid", "fa-trash-can") 
+        return corbeille 
+      } 
+
+      const contentCorbeille = document.createElement("div") 
+	  contentCorbeille.classList.add("trash") 
+      contentCorbeille.appendChild(createTrashIcon()) 
+      projectModale.appendChild(contentCorbeille) 
+
+      contentCorbeille.addEventListener("click", () => handleTrashClick(elements.id)) 
+    } 
+
+    const handleTrashClick = (projectId) => {
+      const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce projet ?") 
+      if (confirmation) {
+        const token = sessionStorage.getItem("token") 
+        if (token) {
+          fetch(`http://localhost:5678/api/works/${projectId}`, {
+            method: "DELETE",
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            accept: "application/json",
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("Erreur de requête réseau") 
+              }
+              return response 
+            })
+            .then(() => {
+              const projectModale = document.querySelector(`.project[data-category="${projectId}"]`) 
+              if (projectModale) {
+                projectModale.remove() 
+              }
+            })
+            .catch(error => {
+              console.error(error) 
+            }) 
+        }
+      }
+    } 
+
+    data.forEach(createProjectElement) 
+  })
+  .catch(error => {
+    console.error(error) 
+  }) 
