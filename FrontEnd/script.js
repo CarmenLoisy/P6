@@ -114,40 +114,6 @@ if (isConnected()) {
 	})
 }
 
-let modal = null //stocker l'élément modal actuel
-
-const openModal = function (e) {
-  const targetModalId = e.currentTarget.getAttribute('href').substring(1)
-  modal = document.getElementById(targetModalId) 
-  if (modal) {
-    modal.style.display = 'flex' 
-    modal.removeAttribute('aria-hidden') 
-    modal.setAttribute('aria-modal', 'true') 
-    modal.addEventListener('click', closeModal) 
-    modal.querySelector('.fa-xmark').addEventListener('click', closeModal) 
-    modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation) 
-  }
-} 
-
-const closeModal = function (e) {
-  if (!modal) return 
-  modal.style.display = 'none' 
-  modal.setAttribute('aria-hidden', 'true') 
-  modal.removeAttribute('aria-modal') 
-  modal.removeEventListener('click', closeModal) 
-  modal.querySelector('.fa-xmark').removeEventListener('click', closeModal) 
-  modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation) 
-  modal = null 
-} 
-
-const stopPropagation = function (e) {
-  e.stopPropagation() 
-} 
-
-document.querySelectorAll('.js-modal').forEach(a => {
-  a.addEventListener('click', openModal) 
-}) 
-
 //Affichage des projets dans la modale
 
 fetch("http://localhost:5678/api/works")
@@ -220,4 +186,89 @@ fetch("http://localhost:5678/api/works")
   })
   .catch(error => {
     console.error(error) 
-  }) 
+  })   
+// Récupère tous les éléments modals
+const modalElements = document.querySelectorAll('.js-modal')  
+
+// Variable pour stocker le modal actif
+let activeModal = null  
+
+// Récupère le composant modal principal
+const modal = document.querySelector('.modal')  
+
+// Fonction pour ouvrir un modal
+const openModal = (event) => {
+  // Extrait l'ID du modal à partir de l'attribut href du lien déclencheur
+  const targetModalId = event.currentTarget.getAttribute('href').substring(1)  
+
+  // Trouve l'élément modal correspondant à l'ID
+  const modalElement = document.getElementById(targetModalId)  
+
+  // Si l'élément modal existe
+  if (modalElement) {
+    // Défini le modal actuel comme actif
+    activeModal = modalElement  
+
+    // Affiche le modal, supprime l'attribut aria-hidden, ajoute l'attribut aria-modal et ajoute des écouteurs d'événements
+    modalElement.style.display = 'flex'  
+    modalElement.removeAttribute('aria-hidden')  
+    modalElement.setAttribute('aria-modal', true)  
+    activeModal.addEventListener('click', closeModal)  
+    modalElement.querySelector('.fa-xmark').addEventListener('click', closeModal)  
+    modalElement.querySelector('.js-modal-stop').addEventListener('click', stopPropagation)  
+  }
+}  
+
+// Fonction pour fermer le modal actif
+const closeModal = () => {
+  // Si aucun modal actif, termine la fonction
+  if (!activeModal) return  
+
+  // Cache le modal actif, rétablit l'attribut aria-hidden, supprime l'attribut aria-modal et supprime les écouteurs d'événements
+  activeModal.style.display = 'none'  
+  activeModal.setAttribute('aria-hidden', true)  
+  activeModal.removeAttribute('aria-modal')  
+  activeModal.removeEventListener('click', closeModal)  
+  activeModal.querySelector('.fa-xmark').removeEventListener('click', closeModal)  
+  activeModal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation)  
+
+  // Défini le modal actuel comme vide
+  activeModal = null  
+}  
+
+// Attache l'écouteur d'événements «click» à tous les éléments avec la classe «js-modal»
+modalElements.forEach(element => {
+  element.addEventListener('click', openModal)  
+})  
+
+// Récupère les éléments des modales secondaires
+const modale1 = document.querySelector('.modal-wrapper')  
+const modale2 = document.querySelector('.blockModal2')  
+
+// Récupère les boutons et les flèches de navigation
+const boutonAjouter = document.querySelector(".button1")  
+const leftArrow = document.querySelector(".fa-arrow-left")  
+
+// Fonction pour basculer vers le modal 2 et désactiver la fermeture du modal 1
+boutonAjouter.addEventListener('click', (event) => {
+  // Cache le modal principal et affiche le modal 2
+  modale1.style.display = 'none'  
+  modale2.style.display = 'flex'  
+
+  // Ajoute les écouteurs d'événements pour fermer le modal 2
+  modal.addEventListener('click', closeModal)  
+  modal.querySelector('.blockModal2.js-modal-stop > .fa-xmark').addEventListener('click', closeModal)  
+  modal.querySelector('.blockModal2.js-modal-stop').addEventListener('click', stopPropagation)  
+})  
+
+// Fonction pour basculer vers le modal 1 et activer la fermeture du modal 1
+leftArrow.addEventListener('click', () => {
+  // Cache le modal 2 et affiche le modal 1
+  modale2.style.display = 'none'  
+  modale1.style.display = 'flex'  
+})  
+
+// Fonction pour empêcher la propagation d'événements
+const stopPropagation = (event) => {
+  event.stopPropagation()  
+}  
