@@ -223,7 +223,6 @@ const openModal = (event) => {
 const closeModal = () => {
   // Si aucun modal actif, termine la fonction
   if (!activeModal) return  
-
   // Cache le modal actif, rétablit l'attribut aria-hidden, supprime l'attribut aria-modal et supprime les écouteurs d'événements
   activeModal.style.display = 'none'  
   activeModal.setAttribute('aria-hidden', true)  
@@ -242,8 +241,8 @@ modalElements.forEach(element => {
 })  
 
 // Récupère les éléments des modales secondaires
-const modale1 = document.querySelector('.modal-wrapper')  
-const modale2 = document.querySelector('.blockModal2')  
+const modale1 = document.querySelector('.modal-1')  
+const modale2 = document.querySelector('.modal-2')  
 
 // Récupère les boutons et les flèches de navigation
 const boutonAjouter = document.querySelector(".button1")  
@@ -253,12 +252,12 @@ const leftArrow = document.querySelector(".fa-arrow-left")
 boutonAjouter.addEventListener('click', (event) => {
   // Cache le modal principal et affiche le modal 2
   modale1.style.display = 'none'  
-  modale2.style.display = 'flex'  
+  modale2.style.display = 'block'  
 
   // Ajoute les écouteurs d'événements pour fermer le modal 2
   modal.addEventListener('click', closeModal)  
-  modal.querySelector('.blockModal2.js-modal-stop > .fa-xmark').addEventListener('click', closeModal)  
-  modal.querySelector('.blockModal2.js-modal-stop').addEventListener('click', stopPropagation)  
+  modal.querySelector('.modal-2.js-modal-stop > .fa-xmark').addEventListener('click', closeModal)  
+  modal.querySelector('.modal-2.js-modal-stop').addEventListener('click', stopPropagation)  
 })  
 
 // Fonction pour basculer vers le modal 1 et activer la fermeture du modal 1
@@ -272,3 +271,75 @@ leftArrow.addEventListener('click', () => {
 const stopPropagation = (event) => {
   event.stopPropagation()  
 }  
+// Previsualiser photo
+
+const btnAddPhoto = document.querySelector('.button3');
+const inputPhoto = document.querySelector('#file');
+
+btnAddPhoto.addEventListener('change', () => {
+  const addPhoto = document.querySelector('.ajoutPhoto');
+  const addPhotoIcon = document.querySelector('.fa-image');
+  const addPhotoInstructions = document.querySelector('.instruction');
+
+  console.log(inputPhoto.files.length)
+  if (inputPhoto.files.length > 0) {
+    const photo = inputPhoto.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.src = e.target.result
+      img.classList.add("uploaded-photo")
+      addPhoto.appendChild(img)
+    }
+
+    reader.readAsDataURL(photo)
+    addPhotoIcon.style.display = "none"
+    inputPhoto.style.display = "none"
+    addPhotoInstructions.style.display = "none"
+    btnAddPhoto.style.display = "none"
+  }
+});
+
+// Envoi des nouveaux projets
+
+const titleInput = document.getElementById('title');
+const categorySelect = document.querySelector('select');
+const fileInput = document.getElementById('file');
+const addButton = document.querySelector('.btn_validate');
+
+addButton.addEventListener('click', () => {
+  const title = titleInput.value;
+  const category = categorySelect.value;
+  const imageFile = fileInput.files[0];
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('category', category);
+  formData.append('image', imageFile);
+
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    fetch('http://localhost:5678/api/works', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      accept: 'application/json',
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erreur de requête réseau');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert('Projet ajouté avec succès !');
+        location.reload(true);
+      })
+      .catch(error => {
+        console.error(error);
+        alert('Erreur lors de l\'ajout du projet.');
+      });
+  }
+});

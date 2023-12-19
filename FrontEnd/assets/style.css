@@ -401,20 +401,20 @@ i, a{
     flex-direction: column;
     align-items: center;
     margin: 0 20px;
-	height: 100px;
+    height: 170px;
     background-color: #E8F1F6;
-    padding: 60px 0 20px 0;
-	justify-content: center;
+    /* padding: 20px 0; */
+    justify-content: space-around;
 }
 .fa-image{
 	color: #B9C5CC;
 	font-size: 60px;
-	margin-bottom: 27px;
+	line-height: normal;
 }
 
 .ajoutPhoto .button3{
 	all: unset;
-	margin: 16px;
+	/* margin: 16px; */
 }
 
 .button3 label{
@@ -438,6 +438,8 @@ i, a{
 .modal-2>form{
 	text-align: left;
 	margin: 0 20px 20px;
+	padding-bottom: 30px;
+    border-bottom: 1px solid #b3b3b3;
 }
 .btn_validate {
     margin: 0 20px;
@@ -452,4 +454,8 @@ i, a{
 }
 #categories {
     color: #6C6C6C;
+}
+img.uploaded-photo {
+    height: 169px;
+    width: fit-content;
 }
