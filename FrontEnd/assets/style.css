@@ -127,6 +127,7 @@ table {
 /* Variables CSS */
 :root {
 	--main-color: #1d6154;
+	--primary-color: #b1663c;
 	--secondary-color: #b3b3b3;
 	--background-color: #fffef8;
 }
@@ -135,7 +136,7 @@ table {
 body {
 	max-width: 1140px;
 	margin: auto;
-	font-family: "Work Sans";
+	font-family: "Work Sans", sans-serif;
 	font-size: 14px;
 	background: var(--background-color);
 	display: flex;
@@ -155,7 +156,7 @@ main {
 
 h1,
 h2 {
-	font-family: "Syne";
+	font-family: "Syne", sans-serif;
 }
 
 h1 {
@@ -163,11 +164,11 @@ h1 {
 	flex-direction: column;
 	font-size: 22px;
 	font-weight: 800;
-	color: #b1663c;
+	color: var(--primary-color);
 }
 
 h1 > span {
-	font-family: "Work Sans";
+	font-family: "Work Sans", sans-serif;
 	font-size: 10px;
 	letter-spacing: 0.1em;
 }
@@ -191,7 +192,7 @@ nav li {
 }
 
 a:hover {
-	color: #b1663c;
+	color: var(--primary-color);
 }
 footer {
 	text-align: right;
@@ -241,11 +242,11 @@ footer {
 }
 .filtres > * {
 	border-radius: 60px;
-	border: 1px solid #1d6154;
+	border: 1px solid var(--main-color);
 	padding: 10px 20px;
 }
 .active {
-	background: #1d6154;
+	background: var(--main-color);
 	color: white;
 }
 figcaption {
@@ -261,20 +262,6 @@ figcaption {
 #contact h2 {
 	margin-bottom: 20px;
 }
-
-input[type="submit"],
-.button1 {
-	font-family: "Syne";
-	color: white;
-	background-color: var(--main-color);
-	margin: 2em auto;
-	width: 180px;
-	border-radius: 60px;
-}
-label {
-	padding: 40px 0 10px 0;
-}
-
 /* page login */
 form {
 	margin: 50px auto;
@@ -282,21 +269,15 @@ form {
 	flex-direction: column;
 	width: fit-content;
 }
-textarea,
-input {
+textarea, input {
 	width: 379px;
 }
-.button1,
-input,
-textarea, select#categories {
+.button1, input, textarea, select{
 	border-style: none;
 	box-shadow: 0px 4px 14px 0px #00000017;
 	min-height: 50px;
-	/* padding-left: 10px; */
-	/* width: auto; */
 }
-a,
-a:visited {
+a, a:visited {
 	text-align: center;
 	color: black;
 	text-decoration: none;
@@ -306,6 +287,17 @@ a:visited {
 	color: red;
 	text-align: center;
 	padding: 10px;
+}
+input[type="submit"], .button1 {
+	font-family: "Syne", sans-serif;
+	color: white;
+	background-color: var(--main-color);
+	margin: 2em auto;
+	width: 180px;
+	border-radius: 60px;
+}
+label {
+	padding: 40px 0 10px 0;
 }
 #portfolio {
 	display: flex;
@@ -346,10 +338,16 @@ a:visited {
 	align-items: center;
 	border-radius: 10px;
 }
+.modal-2 {
+	background: white;
+	padding: 20px;
+	display: none;
+	text-align: center;
+}
 .titlemodal {
 	font-size: 26px;
 	text-align: center;
-    padding: 20px;
+	padding: 20px;
 }
 .fa-xmark {
 	align-self: flex-end;
@@ -361,7 +359,7 @@ a:visited {
 	flex-wrap: wrap;
 	width: 80%;
 	padding-bottom: 30px;
-	border-bottom: 1px solid #b3b3b3;
+	border-bottom: 1px solid var(--secondary-color);
 }
 
 .project-modale img {
@@ -382,80 +380,81 @@ i.fa-solid.fa-trash-can {
 	padding: 3px;
 	border-radius: 3px;
 }
-.modal-2 {
-    background: white;
-    padding: 20px;
-	display: none;
-	text-align: center;
-}
+
 i.fa-solid.fa-arrow-left {
-    width: 20px;
-    height: 20px;
+	width: 20px;
+	height: 20px;
 	float: left;
 }
-i, a{
+i,
+a {
 	cursor: pointer;
 }
-.ajoutPhoto{
+.ajoutPhoto {
 	display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 20px;
-    height: 170px;
-    background-color: #E8F1F6;
-    /* padding: 20px 0; */
-    justify-content: space-around;
+	flex-direction: column;
+	align-items: center;
+	margin: 0 20px;
+	height: 170px;
+	background-color: #e8f1f6;
+	justify-content: space-around;
 }
-.fa-image{
-	color: #B9C5CC;
+.fa-image {
+	color: #b9c5cc;
 	font-size: 60px;
 	line-height: normal;
 }
 
-.ajoutPhoto .button3{
+.button3 {
 	all: unset;
-	/* margin: 16px; */
 }
 
-.button3 label{
-	font-family: 'Work Sans';
+.button3 label {
+	font-family: "Work Sans", sans-serif;
 	font-weight: 500;
 	font-size: 14px;
-	color: #306685;
-	background-color: #CBD6DC;;
+	color: var(--main-color);
+	background-color: #cbd6dc;
 	padding: 10px 32px;
 	text-align: center;
-	border-radius: 50px ;
+	border-radius: 50px;
 }
 
-.button3 input{
+.button3 input {
 	display: none;
 }
+label.button3 {
+    border-radius: 50px;
+    background: #CBD6DC;
+    color: #306685;
+    padding: 10px 33px;}
 
-.instruction{
+.instruction {
 	font-size: 10px;
 }
-.modal-2>form{
+.modal-2 > form {
 	text-align: left;
 	margin: 0 20px 20px;
 	padding-bottom: 30px;
-    border-bottom: 1px solid #b3b3b3;
+	border-bottom: 1px solid #b3b3b3;
 }
 .btn_validate {
-    margin: 0 20px;
-    border-radius: 60px;
-    background: #A7A7A7;
-    color: white;
-    font-family: Syne;
-    font-size: 14px;
-    border: none;
-    width: 237px;
-    height: 36px;
+	margin: 0 20px;
+	border-radius: 60px;
+	background: #a7a7a7;
+	color: white;
+	font-family: "Syne", sans-serif;
+	font-size: 14px;
+	border: none;
+	width: 237px;
+	height: 36px;
 }
 #categories {
-    color: #6C6C6C;
+	color: #6c6c6c;
 }
 img.uploaded-photo {
-    height: 169px;
-    width: fit-content;
+	height: 169px;
+	width: fit-content;
 }
+.invalid {
+	box-shadow: 0 0 5px 1px red;}

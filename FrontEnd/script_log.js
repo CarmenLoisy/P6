@@ -1,45 +1,58 @@
-console.log("sophie.bluel@test.tld")
-console.log("S0phie")
-// Sélection des éléments du DOM
-const mailInput = document.getElementById('emailInput')
-const mdpInput = document.getElementById('passwordInput')
-const sendInput = document.getElementById('send-input')
-const errorDial = document.getElementById('error-message')
+const emailInput = document.getElementById("emailInput");
+const passwordInput = document.getElementById("passwordInput");
+const sendInput = document.getElementById("send-input");
+const errorDial = document.getElementById("error-message");
+const loginUrl = "http://localhost:5678/api/users/login"; // URL pour l'authentification
 
-// URL pour l'authentification
-const loginUrl = "http://localhost:5678/api/users/login"
-// Fonction d'authentification 
-async function logIn(data) { // Opération asynchrone de côté client vers le serveur
+async function logIn(data) {
   const loginOptions = {
-    method: "POST",//Soumettre des données au serveur
-    headers: {// L'en-têtes HTTP de la requête
+    method: "POST",
+    headers: {
       "content-type": "application/json",
     },
-    body: data,//Données envoyées au format JSON
-  }
-  return await (await fetch(loginUrl, loginOptions)).json()//effectue la requête POST fetch et attendre la requête avant de continuer
+    body: data,
+  };
+  return await (await fetch(loginUrl, loginOptions)).json();
 }
 
-// Gestionnaire d'événements pour le bouton d'envoi
 sendInput.addEventListener("click", async (event) => {
   try {
-    event.preventDefault()
-    // Parcourir les propriétés et d'accéder à leurs valeurs
-    const user = JSON.stringify({//Convertir les donnes JS en une chaîne JSON
-		email: mailInput.value,
-		password: mdpInput.value,
-	  })
-    // stocker la réponse de la fonction logIn.
-	const response = await logIn(user)//attendre que la fonction logIn soit terminée
-    // Traitement de la réponse
-    console.log(response)
-    if (response.userId === 1) {// condition si (userId) est la réponse du serveur
-      sessionStorage.setItem("token", response.token)//stocke le jeton dans le stockage local
-      window.location.href = "index.html"//redirige vers la page d'index
-    } else {//sinon affiche un message d'erreur
-      errorDial.style.display = "block"// dans une boîte modale
+    event.preventDefault();
+
+    // Vérifiez la validité de l'e-mail et du mot de passe
+    const isValidEmail = emailInput.checkValidity();
+    const isValidPassword = passwordInput.checkValidity();
+
+    if (!isValidEmail) {
+      emailInput.classList.add("invalid");
+    } else {
+      emailInput.classList.remove("invalid");
     }
-  } catch (err) {//Intercepte l'erreur et l'affiche dans la console
-    console.error(err)
+
+    if (!isValidPassword) {
+      passwordInput.classList.add("invalid");
+    } else {
+      passwordInput.classList.remove("invalid");
+    }
+
+    if (isValidEmail && isValidPassword) {
+      const user = JSON.stringify({
+        email: emailInput.value,
+        password: passwordInput.value,
+      });
+
+      const response = await logIn(user);
+
+      if (response.userId === 1) {
+        sessionStorage.setItem("token", response.token);
+        window.location.href = "index.html";
+      } else {
+        errorDial.style.display = "block";
+      }
+    }
+  } catch (err) {
+    console.error(err);
   }
-})
+});
+console.log("sophie.bluel@test.tld") 
+console.log("S0phie")
