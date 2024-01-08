@@ -1,28 +1,137 @@
 const urlWorks = "http://localhost:5678/api/works";
 const urlCategories = "http://localhost:5678/api/categories";
-
-async function fetchData(url) {
-	const response = await fetch(url);
+async function fetchData(url) {//Requêtes asynchrones pour récupérer des données à partir de l'un des deux endpoints
+	const response = await fetch(url); // Utilisation de fetch pour envoyer une requête GET
 	if (!response.ok) {
+		// Vérifier si la requête a réussi (statut 200-299)
 		throw new Error(`Erreur de requête réseau`);
 	}
-	return response.json();
+	return response.json(); // Convertir la réponse en JSON
 }
-function createProject(elements) {
+async function test() {//Tester les routes Swagger API 2 endpoints
+	try {
+		const worksData = await fetchData(urlWorks);
+		const categoriesData = await fetchData(urlCategories);
+		// Affichage les données récupérées
+		console.log("Données Works:", worksData);
+		console.log("Données Categories:", categoriesData);
+	} catch (error) {
+		//Le bloc suivant est exécuté en cas d'erreur lors de la requête
+		console.error(error);
+	}
+}
+test();
+async function main() {//Affichage des données dans...
+	const data = await fetchData(urlWorks);
+	try {//... la galerie
+		const gallery = document.querySelector(".gallery");
+		data.forEach((elements) => {
+			// Utilisation de forEach pour simplifier la boucle
+			const project = createProject(elements);
+			gallery.appendChild(project);
+		});
+	} catch (error) {
+		console.error(error);
+	}
+	try {//... la modale
+		const galleryModale = document.querySelector(".project-modale");
+		data
+			.map(createProjectElement)
+			.forEach((projectModale) => galleryModale.appendChild(projectModale));
+	} catch (error) {
+		console.error(error);
+	}
+}
+function createProject(elements) {//Générer des éléments HTML pour afficher les projets
 	const project = document.createElement("figure");
-	project.classList.add("project");
-	project.setAttribute("data-category", elements.category.name);
-
 	const img = document.createElement("img");
-	img.src = elements.imageUrl;
-
 	const imgTitle = document.createElement("figcaption");
+	img.src = elements.imageUrl; // Ajout d'attributs
 	imgTitle.innerText = elements.title;
-	project.appendChild(img);
+	project.appendChild(img); // Attachement des éléments au DOM
 	project.appendChild(imgTitle);
-
+	project.classList.add("project"); // Ajout de classes
+	project.setAttribute("data-category", elements.category.name); // l'objet elements a une propriété category qui elle-même a une propriété name.
 	return project;
 }
+function initCategories() {// Filtrage des projets
+	const filterSet = new Set(); // Utilisation d'un objet Set pour stocker les filtres uniques
+	const filters = document.querySelectorAll(".filtres div");
+	function setActiveFilter(filter) { // Fonction pour activer le filtre
+		filters.forEach((f) => f.classList.remove("active"));
+		filter.classList.add("active");
+	}
+	filters.forEach((filter) => {// Écoute des clics sur les boutons de filtre
+		filter.addEventListener("click", () => {// Récupération du nom de la catégorie du filtre cliqué
+			const filterName = filter.textContent.trim();
+			const projects = document.querySelectorAll(".project");
+			projects.forEach((project) => {// Filtrage des projets en fonction du nom de la catégorie
+				const projectCategory = project.getAttribute("data-category");
+				project.style.display =
+					filterName === "Tous" || filterName === projectCategory ? "block" : "none";
+			});
+			setActiveFilter(filter); // Mise en surbrillance du filtre actif
+		});
+		if (filter.classList.contains("tous")) { // Mettez en surbrillance le filtre par défaut (ici, le premier filtre)
+			setActiveFilter(filter);
+		}
+		filterSet.add(filter.textContent.trim()); // Ajout du filtre à l'objet Set pour s'assurer qu'il est unique
+	});
+	console.log("Liste unique des filtres:", filterSet);
+}
+function isConnected() {//Récupère l'élément stocké sous la clé "token" 
+	return !!sessionStorage.getItem("token"); 
+}
+function setupPage() { //si l'utilisateur est connecté 
+	if (isConnected()) {
+		const loginLogoutButton = document.querySelector(".login_logout");
+		const buttonModif = document.querySelector(".js-modal");
+		const filters = document.querySelector(".filtres");
+
+		loginLogoutButton.innerText = "Logout";
+		buttonModif.style.display = "flex";
+		filters.style.display = "none";
+
+		loginLogoutButton.addEventListener("click", () => {
+			sessionStorage.removeItem("token"); //supprime le jeton de connexion de la session de stockage
+			window.location.replace("index.html"); //rediriger vers deconnexion
+		});
+	}
+}
+//Gérer l'ouverture et la fermeture d'une fenêtre modale
+const modalElements = document.querySelectorAll(".js-modal");
+let activeModal = null; // Variable pour stocker le modal actif
+const modal = document.querySelector(".modal");
+function openModal(event) { // Fonction pour ouvrir un modal
+	const targetModalId = event.currentTarget.getAttribute("href").substring(1); // Extrait l'ID du modal à partir de l'attribut href du lien déclencheur
+	const modalElement = document.getElementById(targetModalId); // Trouve l'élément modal correspondant à l'ID
+	if (modalElement) { // Si l'élément modal existe
+		activeModal = modalElement; // Défini le modal actuel comme actif
+		modalElement.style.display = "flex";
+		modalElement.removeAttribute("aria-hidden");
+		//modalElement.setAttribute("aria-modal", true);
+		activeModal.addEventListener("click", closeModal);
+		modalElement.querySelector(".fa-xmark").addEventListener("click", closeModal);
+		modalElement.querySelector(".js-modal-stop").addEventListener("click", stopPropagation);
+	}
+}
+function closeModal() { // Fonction pour fermer le modal actif
+	if (!activeModal) return; // Si aucun modal actif, termine la fonction
+	activeModal.style.display = "none";
+	activeModal.setAttribute("aria-hidden", true);
+	activeModal.removeAttribute("aria-modal");
+	activeModal.removeEventListener("click", closeModal);
+	activeModal.querySelector(".fa-xmark").removeEventListener("click", closeModal);
+	activeModal.querySelector(".js-modal-stop").removeEventListener("click", stopPropagation);
+	activeModal = null; // Défini le modal actuel comme vide
+}
+function stopPropagation(event) { // Fonction pour empêcher la propagation d'événements
+	event.stopPropagation();
+}
+modalElements.forEach((element) => { // Attache l'écouteur d'événements «click» à tous les éléments avec la classe «js-modal»
+	element.addEventListener("click", openModal);
+});
+
 function createProjectElement(elements) {
 	const projectModale = document.createElement("figure");
 	projectModale.classList.add("project");
@@ -77,143 +186,11 @@ async function handleTrashClick(projectId) {
 		}
 	}
 }
-
-async function main() {
-	try {
-		const data = await fetchData(urlWorks);
-		const gallery = document.querySelector(".gallery");
-
-		data.forEach((elements) => {
-			const project = createProject(elements);
-			gallery.appendChild(project);
-		});
-
-		console.log(`projects count: ${data.length}`);
-	} catch (error) {
-		console.error(error);
-	}
-	try {
-		const dataModale = await fetchData(urlWorks);
-		const galleryModale = document.querySelector(".project-modale");
-
-		dataModale
-			.map(createProjectElement)
-			.forEach((projectModale) => galleryModale.appendChild(projectModale));
-
-		console.log(`modale projects count: ${dataModale.length}`);
-	} catch (error) {
-		console.error(error);
-	}
-}
-
-async function initCategories() {
-	try {
-		const dataCategory = await fetchData(urlCategories);
-		const filterSet = new Set();
-		const filters = document.querySelectorAll(".filtres div");
-
-		function setActiveFilter(filter) {
-			filters.forEach((f) => f.classList.remove("active"));
-			filter.classList.add("active");
-		}
-
-		filters.forEach((filter) => {
-			filter.addEventListener("click", () => {
-				const filterName = filter.textContent.trim();
-				const projects = document.querySelectorAll(".project");
-
-				projects.forEach((project) => {
-					const projectCategory = project.getAttribute("data-category");
-					project.style.display =
-						filterName === "Tous" || filterName === projectCategory ? "block" : "none";
-				});
-
-				setActiveFilter(filter);
-			});
-
-			if (filter.classList.contains("tous")) {
-				setActiveFilter(filter);
-			}
-
-			filterSet.add(filter.textContent.trim());
-		});
-
-		console.log("Liste unique des filtres:", filterSet);
-	} catch (error) {
-		console.error(
-			"Une erreur s'est produite lors de la récupération des catégories : ",
-			error
-		);
-	}
-}
-
-function isConnected() {
-	return !!sessionStorage.getItem("token");
-}
-
-async function setupPage() {
-	if (isConnected()) {
-		const loginLogoutButton = document.querySelector(".login_logout");
-		const buttonModif = document.querySelector(".js-modal");
-		const filters = document.querySelector(".filtres");
-
-		loginLogoutButton.innerText = "Logout";
-		buttonModif.style.display = "flex";
-		filters.style.display = "none";
-
-		loginLogoutButton.addEventListener("click", () => {
-			sessionStorage.removeItem("token");
-			window.location.replace("index.html");
-		});
-	}
-}
-
 async function init() {
 	await Promise.all([main(), initCategories(), setupPage()]);
 }
 
 init();
-
-const modalElements = document.querySelectorAll(".js-modal");
-let activeModal = null;
-const modal = document.querySelector(".modal");
-
-function openModal(event) {
-	const targetModalId = event.currentTarget.getAttribute("href").substring(1);
-	const modalElement = document.getElementById(targetModalId);
-	if (modalElement) {
-		activeModal = modalElement;
-		modalElement.style.display = "flex";
-		modalElement.removeAttribute("aria-hidden");
-		modalElement.setAttribute("aria-modal", true);
-		activeModal.addEventListener("click", closeModal);
-		modalElement.querySelector(".fa-xmark").addEventListener("click", closeModal);
-		modalElement
-			.querySelector(".js-modal-stop")
-			.addEventListener("click", stopPropagation);
-	}
-}
-
-function closeModal() {
-	if (!activeModal) return;
-	activeModal.style.display = "none";
-	activeModal.setAttribute("aria-hidden", true);
-	activeModal.removeAttribute("aria-modal");
-	activeModal.removeEventListener("click", closeModal);
-	activeModal.querySelector(".fa-xmark").removeEventListener("click", closeModal);
-	activeModal
-		.querySelector(".js-modal-stop")
-		.removeEventListener("click", stopPropagation);
-	activeModal = null;
-}
-
-function stopPropagation(event) {
-	event.stopPropagation();
-}
-
-modalElements.forEach((element) => {
-	element.addEventListener("click", openModal);
-});
 
 const modale1 = document.querySelector(".modal-1");
 const modale2 = document.querySelector(".modal-2");
@@ -224,12 +201,8 @@ boutonAjouter.addEventListener("click", (event) => {
 	modale1.style.display = "none";
 	modale2.style.display = "block";
 	modal.addEventListener("click", closeModal);
-	modal
-		.querySelector(".modal-2.js-modal-stop > .fa-xmark")
-		.addEventListener("click", closeModal);
-	modal
-		.querySelector(".modal-2.js-modal-stop")
-		.addEventListener("click", stopPropagation);
+	modal.querySelector(".modal-2.js-modal-stop > .fa-xmark").addEventListener("click", closeModal);
+	modal.querySelector(".modal-2.js-modal-stop").addEventListener("click", stopPropagation);
 });
 
 leftArrow.addEventListener("click", () => {
@@ -280,7 +253,7 @@ addButton.addEventListener("click", async (event) => {
 	formData.append("category", category);
 	formData.append("image", imageFile);
 	const token = sessionStorage.getItem("token");
-	
+
 	const isValidTitle = titleInput.validity.valid;
 	const isValidFile = fileInput.validity.valid;
 	if (!isValidTitle || !isValidFile) {
@@ -298,9 +271,9 @@ addButton.addEventListener("click", async (event) => {
 		}
 		return;
 	}
-	 if (category === "") {
-	 	return;
-	 }
+	if (category === "") {
+		return;
+	}
 	try {
 		const response = await fetch(urlWorks, {
 			method: "POST",
