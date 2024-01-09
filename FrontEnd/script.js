@@ -150,7 +150,7 @@ function createProjectElement(elements) {//Générer des éléments HTML pour af
 	contentCorbeille.addEventListener("click", () => handleTrashClick(elements.id)); //Gestionnaire d'événements pour la corbeille
 	return projectModale;
 }
-async function handleTrashClick(projectId) {
+async function handleTrashClick(projectId) {//Gestion de la corbeille
 	const confirmation = window.confirm(
 		//Confirmation de suppression
 		"Êtes-vous sûr de vouloir supprimer ce projet ?"
@@ -178,7 +178,6 @@ async function handleTrashClick(projectId) {
 		}
 	}
 }
-
 //Passer du modal 1 au modal 2
 const modale1 = document.querySelector(".modal-1");
 const modale2 = document.querySelector(".modal-2");
@@ -188,12 +187,8 @@ boutonAjouter.addEventListener("click", (event) => {
 	modale1.style.display = "none";
 	modale2.style.display = "block";
 	modal.addEventListener("click", closeModal);
-	modal
-		.querySelector(".modal-2.js-modal-stop > .fa-xmark")
-		.addEventListener("click", closeModal);
-	modal
-		.querySelector(".modal-2.js-modal-stop")
-		.addEventListener("click", stopPropagation);
+	modal.querySelector(".modal-2.js-modal-stop > .fa-xmark").addEventListener("click", closeModal);
+	modal.querySelector(".modal-2.js-modal-stop").addEventListener("click", stopPropagation);
 });
 leftArrow.addEventListener("click", () => {
 	modale2.style.display = "none";
@@ -206,83 +201,68 @@ const addButton = document.querySelector(".btn_validate");
 const inputPhoto = document.querySelector("#file");
 const addPhoto = document.querySelector(".ajoutPhoto");
 const fileInput = document.getElementById("file");
-
 let previousImage = null;
-
-addPhoto.addEventListener("click", () => {
-  fileInput.click();
-});
-
-fileInput.addEventListener("change", () => {
+const handleFileChange = () => {//Gérer le changement de fichier
   const btnAddPhoto = document.querySelector(".button3");
   const addPhotoIcon = document.querySelector(".fa-image");
   const addPhotoInstructions = document.querySelector(".instruction");
-
-  // Supprimer l'image précédente si elle existe
-  if (previousImage) {
+  if (previousImage) {// Supprimer l'image précédente si elle existe
     previousImage.remove();
   }
-
-  if (inputPhoto.files.length > 0) {
-    const photo = inputPhoto.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const img = new Image();
-      img.src = e.target.result;
+  if (inputPhoto.files.length > 0) { //vérifie s'il y a au moins un fichier dans inputPhoto.
+    const photo = inputPhoto.files[0]; //Récupérér la première image
+    const reader = new FileReader(); //lire le contenu du fichier image 
+    reader.onload = (e) => {//Si la lecture du fichier est terminée
+      const img = new Image();//chargement l'image
+      img.src = e.target.result; //les données sous forme d'URL
       img.classList.add("uploaded-photo");
-
-      // Mettre à jour l'image précédente
-      previousImage = img;
-
-      addPhoto.appendChild(img);
+      previousImage = img;// Mettre à jour l'image précédente
+      addPhoto.appendChild(img);//afficher la prévisualisation de l'image
     };
-
     reader.readAsDataURL(photo);
-
     addPhotoIcon.style.display = "none";
     btnAddPhoto.style.display = "none";
     addPhotoInstructions.style.display = "none";
   }
-});
-
-
-  
-
-// Ajout d'événement sur le bouton "Valider"
-addButton.addEventListener("click", async (event) => {
-	event.preventDefault();
-	const title = titleInput.value;
-	const category = categorySelect.value;
-	const imageFile = fileInput.files[0];
-	const formData = new FormData();
-	formData.append("title", title);
-	formData.append("category", category);
-	formData.append("image", imageFile);
-	const token = sessionStorage.getItem("token");
-	const isValidTitle = titleInput.validity.valid;
-	const isValidFile = fileInput.validity.valid;
-	if (!isValidTitle || !isValidFile || category === "") {// Gestion des erreurs de validation
-		addPhoto.classList.toggle("invalid", !isValidFile);
-		titleInput.classList.toggle("invalid", !isValidTitle);
-		categorySelect.classList.toggle("invalid", category === "");
-		return;
-	}
-	try {
-		const response = await fetch(urlWorks, {
-			method: "POST",
-			body: formData,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-			accept: "application/json",
-		});
-		location.reload(true); // Rechargement de la page après la requête réussie
-		if (!response.ok) {
-			throw new Error("Erreur de requête réseau");
-		}
-	} 
-	catch (error) {
-		console.error(error);
-	}
+};
+const handleSubmit = async (event) => {//Soumission du formulaire
+  event.preventDefault();
+  const title = titleInput.value; //récupère les valeurs 
+  const category = categorySelect.value;
+  const imageFile = fileInput.files[0];
+  const formData = new FormData(); // traiter des données de formulaire pour envoyer les données au serveur.
+  formData.append("title", title); //ajoute une paire clé-valeur title
+  formData.append("category", category);
+  formData.append("image", imageFile);
+  // Gestion des erreurs de validation
+  const isValidTitle = titleInput.validity.valid;
+  const isValidFile = fileInput.validity.valid;
+  if (!isValidTitle || !isValidFile || category === "") { 
+    addPhoto.classList.toggle("invalid", !isValidFile);
+    titleInput.classList.toggle("invalid", !isValidTitle);
+    categorySelect.classList.toggle("invalid", category === "");
+    return;
+  }
+  const token = sessionStorage.getItem("token"); //Récupération du jeton d'authentification
+  try {
+    const response = await fetch(urlWorks, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      accept: "application/json",
+    });
+    location.reload(true); // Rechargement de la page après la requête réussie
+    if (!response.ok) {
+      throw new Error("Erreur de requête réseau");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+addButton.addEventListener("click", handleSubmit); // Ajout d'événement sur le bouton "Valider"
+fileInput.addEventListener("change", handleFileChange); // Ajout d'événement sur le changement de fichier
+addPhoto.addEventListener("click", () => {// Ajout d'événement sur le bouton "Ajouter photo"
+  fileInput.click();
 });
