@@ -458,3 +458,18 @@ img.uploaded-photo {
 }
 .invalid {
 	box-shadow: 0 0 5px 1px red;}
+
+	.ModeEdition {
+		position: fixed;
+		background-color: black;
+		color: white;
+		padding: 10px;
+		top: 0;
+		left: 0;
+		display: none;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		gap: 10px;
+		font-size: 16px;
+	}

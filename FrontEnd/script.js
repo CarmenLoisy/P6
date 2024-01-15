@@ -82,10 +82,12 @@ function isConnected() {//Récupère l'élément stocké sous la clé "token"
 }
 function setupPage() {//si l'utilisateur est connecté
 	if (isConnected()) {
+		const ModeEdition = document.querySelector(".ModeEdition");
 		const loginLogoutButton = document.querySelector(".login_logout");
 		const buttonModif = document.querySelector(".js-modal");
 		const filters = document.querySelector(".filtres");
 
+		ModeEdition.style.display = "flex";
 		loginLogoutButton.innerText = "Logout";
 		buttonModif.style.display = "flex";
 		filters.style.display = "none";
@@ -137,7 +139,7 @@ modalElements.forEach((element) => {// Attache l'écouteur d'événements «clic
 function createProjectElement(elements) {//Générer des éléments HTML pour afficher les projets dans la modale
 	const projectModale = document.createElement("figure");
 	projectModale.classList.add("project");
-	projectModale.setAttribute("data-category", elements.category.name); // l'objet elements a une propriété category qui elle-même a une propriété name.
+	projectModale.setAttribute("data-category", elements.category.name);// l'objet elements a une propriété category qui elle-même a une propriété name.
 	const img = document.createElement("img");
 	img.src = elements.imageUrl; // Ajout d'attribut
 	projectModale.appendChild(img);
@@ -147,21 +149,18 @@ function createProjectElement(elements) {//Générer des éléments HTML pour af
 	contentCorbeille.classList.add("trash");
 	contentCorbeille.appendChild(corbeille);
 	projectModale.appendChild(contentCorbeille);
-	contentCorbeille.addEventListener("click", () => handleTrashClick(elements.id)); //Gestionnaire d'événements pour la corbeille
+	contentCorbeille.addEventListener("click", (event) => { // Passer l'événement à la fonction handleTrashClick
+	 	handleTrashClick(elements.id, event);
+	 	event.preventDefault(); // Empêcher le comportement par défaut du lien (éviter le rechargement de la page)
+	 });
 	return projectModale;
 }
-async function handleTrashClick(projectId) {//Gestion de la corbeille
-	const confirmation = window.confirm(
-		//Confirmation de suppression
-		"Êtes-vous sûr de vouloir supprimer ce projet ?"
-	);
-	if (confirmation) {
-		//Si... récupération du jeton d'authentification
+async function handleTrashClick(projectId, event) {//Gestion de la corbeille
+	event.preventDefault(); // Empêcher le comportement par défaut du lien (éviter le rechargement de la page)
 		const token = sessionStorage.getItem("token");
-		if (token) {
-			// Si un token est présent suppression du projet
-			try {
-				//requête de type DELETE à l'API pour supprimer le projet spécifié id
+		if (token) { // Si un token est présent suppression du projet
+
+			try {//requête de type DELETE à l'API pour supprimer le projet spécifié id
 				const response = await fetch(`http://localhost:5678/api/works/${projectId}`, {
 					method: "DELETE",
 					headers: {
@@ -169,6 +168,7 @@ async function handleTrashClick(projectId) {//Gestion de la corbeille
 					},
 					accept: "application/json",
 				});
+
 				if (!response.ok) {
 					throw new Error("Erreur de requête réseau");
 				}
@@ -177,7 +177,6 @@ async function handleTrashClick(projectId) {//Gestion de la corbeille
 			}
 		}
 	}
-}
 //Passer du modal 1 au modal 2
 const modale1 = document.querySelector(".modal-1");
 const modale2 = document.querySelector(".modal-2");
