@@ -7,25 +7,24 @@ async function fetchData(url) {//Requêtes asynchrones pour récupérer des donn
 	}
 	return response.json(); // Convertir la réponse en JSON
 }
-async function test() {//Tester les routes Swagger API 2 endpoints
-	try {
-		const worksData = await fetchData(urlWorks);
-		const categoriesData = await fetchData(urlCategories);
-		// Affichage les données récupérées
-		console.log("Données Works:", worksData);
-		console.log("Données Categories:", categoriesData);
-	} catch (error) {//Le bloc suivant est exécuté en cas d'erreur lors de la requête
-		console.error(error);
-	}
-}
-test();
+// async function test() {//Tester les routes Swagger API 2 endpoints
+// 	try {
+// 		const worksData = await fetchData(urlWorks);
+// 		const categoriesData = await fetchData(urlCategories);
+// 		// Affichage les données récupérées
+// 		console.log("Données Works:", worksData);
+// 		console.log("Données Categories:", categoriesData);
+// 	} catch (error) {//Le bloc suivant est exécuté en cas d'erreur lors de la requête
+// 		console.error(error);
+// 	}
+// }
+// test();
 async function main() {//Affichage des données dans...
 	const data = await fetchData(urlWorks);
 	try {//... la galerie
 		const gallery = document.querySelector(".gallery");
-		data.forEach((elements) => {
-			// Utilisation de forEach pour simplifier la boucle
-			const project = createProject(elements);
+		data.forEach((element) => { // Utilisation de forEach pour simplifier la boucle
+			const project = createProject(element);
 			gallery.appendChild(project);
 		});
 	} catch (error) {
@@ -40,16 +39,17 @@ async function main() {//Affichage des données dans...
 		console.error(error);
 	}
 }
-function createProject(elements) {//Générer des éléments HTML pour afficher les projets dans galerie
-	const project = document.createElement("figure");
+function createProject(element) {//Générer des éléments HTML pour afficher les projets dans galerie
+	const project = document.createElement("figure");//
 	const img = document.createElement("img");
-	const imgTitle = document.createElement("figcaption");
-	img.src = elements.imageUrl; // Ajout d'attributs
-	imgTitle.innerText = elements.title;
+    img.setAttribute("alt", element.title); // Utiliser la valeur de l'élément actuel
+	const imgTitle = document.createElement("figcaption");//
+	img.src = element.imageUrl; // Ajout d'attributs//
+	imgTitle.innerText = element.title;//
 	project.appendChild(img); // Attachement des éléments au DOM
 	project.appendChild(imgTitle);
 	project.classList.add("project"); // Ajout de classes
-	project.setAttribute("data-category", elements.category.name); // l'objet elements a une propriété category qui elle-même a une propriété name.
+	project.setAttribute("data-category", element.category.name); // l'objet element a une propriété category qui elle-même a une propriété name.
 	return project;
 }
 function initCategories() {// Filtrage des projets
@@ -75,7 +75,7 @@ function initCategories() {// Filtrage des projets
 		}
 		filterSet.add(filter.textContent.trim()); // Ajout du filtre à l'objet Set pour s'assurer qu'il est unique
 	});
-	console.log("Liste unique des filtres:", filterSet);
+	//console.log("Liste unique des filtres:", filterSet);
 }
 function isConnected() {//Récupère l'élément stocké sous la clé "token"
 	return !!sessionStorage.getItem("token");
@@ -136,21 +136,24 @@ function stopPropagation(event) {// Fonction pour empêcher la propagation d'év
 modalElements.forEach((element) => {// Attache l'écouteur d'événements «click» à tous les éléments avec la classe «js-modal»
 	element.addEventListener("click", openModal);
 });
-function createProjectElement(elements) {//Générer des éléments HTML pour afficher les projets dans la modale
+function createProjectElement(element) {//Générer des éléments HTML pour afficher les projets dans la modale
 	const projectModale = document.createElement("figure");
 	projectModale.classList.add("project");
-	projectModale.setAttribute("data-category", elements.category.name);// l'objet elements a une propriété category qui elle-même a une propriété name.
+	
+	projectModale.setAttribute("data-category", element.category);// l'objet element a une propriété category qui elle-même a une propriété name.
 	const img = document.createElement("img");
-	img.src = elements.imageUrl; // Ajout d'attribut
+	img.src = element.imageUrl; // Ajout d'attribut
 	projectModale.appendChild(img);
+
 	const corbeille = document.createElement("i");
 	corbeille.classList.add("fa-solid", "fa-trash-can");
 	const contentCorbeille = document.createElement("div");
 	contentCorbeille.classList.add("trash");
 	contentCorbeille.appendChild(corbeille);
 	projectModale.appendChild(contentCorbeille);
+	
 	contentCorbeille.addEventListener("click", (event) => { // Passer l'événement à la fonction handleTrashClick
-	 	handleTrashClick(elements.id, event);
+	 	handleTrashClick(element.id, event);
 	 	event.preventDefault(); // Empêcher le comportement par défaut du lien (éviter le rechargement de la page)
 	 });
 	return projectModale;
@@ -159,7 +162,6 @@ async function handleTrashClick(projectId, event) {//Gestion de la corbeille
 	event.preventDefault(); // Empêcher le comportement par défaut du lien (éviter le rechargement de la page)
 		const token = sessionStorage.getItem("token");
 		if (token) { // Si un token est présent suppression du projet
-
 			try {//requête de type DELETE à l'API pour supprimer le projet spécifié id
 				const response = await fetch(`http://localhost:5678/api/works/${projectId}`, {
 					method: "DELETE",
@@ -172,6 +174,11 @@ async function handleTrashClick(projectId, event) {//Gestion de la corbeille
 				if (!response.ok) {
 					throw new Error("Erreur de requête réseau");
 				}
+				// Supprimer l'élément du DOM
+				const projectElement = document.querySelector(`[data-category="${projectId}"]`);
+				if (projectElement) {
+					projectElement.remove();
+				  }
 			} catch (error) {
 				console.error(error);
 			}
@@ -197,7 +204,6 @@ leftArrow.addEventListener("click", () => {
 const titleInput = document.getElementById("title");
 const categorySelect = document.getElementById("categories");
 const addButton = document.querySelector(".btn_validate");
-const inputPhoto = document.querySelector("#file");
 const addPhoto = document.querySelector(".ajoutPhoto");
 const fileInput = document.getElementById("file");
 let previousImage = null;
@@ -208,8 +214,8 @@ const handleFileChange = () => {//Gérer le changement de fichier
   if (previousImage) {// Supprimer l'image précédente si elle existe
     previousImage.remove();
   }
-  if (inputPhoto.files.length > 0) { //vérifie s'il y a au moins un fichier dans inputPhoto.
-    const photo = inputPhoto.files[0]; //Récupérér la première image
+  if (fileInput.files.length > 0) { //vérifie s'il y a au moins un fichier dans fileInput.
+    const photo = fileInput.files[0]; //Récupérér la première image
     const reader = new FileReader(); //lire le contenu du fichier image 
     reader.onload = (e) => {//Si la lecture du fichier est terminée
       const img = new Image();//chargement l'image
@@ -252,10 +258,18 @@ const handleSubmit = async (event) => {//Soumission du formulaire
       },
       accept: "application/json",
     });
-    location.reload(true); // Rechargement de la page après la requête réussie
     if (!response.ok) {
       throw new Error("Erreur de requête réseau");
     }
+	const element = await response.json();
+	const gallery = document.querySelector(".gallery");
+    const newProjectElement = createProjectElement(element);
+    gallery.appendChild(newProjectElement);
+	// Effacer les valeurs du formulaire après l'ajout réussi
+	titleInput.value = "";
+	fileInput.value = "";
+	categorySelect.value = "";
+
   } catch (error) {
     console.error(error);
   }
