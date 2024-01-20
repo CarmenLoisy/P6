@@ -7,21 +7,9 @@ async function fetchData(url) {//Requêtes asynchrones pour récupérer des donn
 	}
 	return response.json(); // Convertir la réponse en JSON
 }
-// async function test() {//Tester les routes Swagger API 2 endpoints
-// 	try {
-// 		const worksData = await fetchData(urlWorks);
-// 		const categoriesData = await fetchData(urlCategories);
-// 		// Affichage les données récupérées
-// 		console.log("Données Works:", worksData);
-// 		console.log("Données Categories:", categoriesData);
-// 	} catch (error) {//Le bloc suivant est exécuté en cas d'erreur lors de la requête
-// 		console.error(error);
-// 	}
-// }
-// test();
 async function main() {//Affichage des données dans...
-	const data = await fetchData(urlWorks);
 	try {//... la galerie
+		const data = await fetchData(urlWorks);
 		const gallery = document.querySelector(".gallery");
 		data.forEach((element) => { // Utilisation de forEach pour simplifier la boucle
 			const project = createProject(element);
@@ -31,6 +19,7 @@ async function main() {//Affichage des données dans...
 		console.error(error);
 	}
 	try {//... la modale
+		const data = await fetchData(urlWorks);
 		const galleryModale = document.querySelector(".project-modale");
 		data
 			.map(createProjectElement)
@@ -49,9 +38,10 @@ function createProject(element) {//Générer des éléments HTML pour afficher l
 	project.appendChild(img); // Attachement des éléments au DOM
 	project.appendChild(imgTitle);
 	project.classList.add("project"); // Ajout de classes
-	project.setAttribute("data-category", element.category.name); // l'objet element a une propriété category qui elle-même a une propriété name.
+	project.setAttribute("data-category", element.category); // l'objet element a une propriété category qui elle-même a une propriété name.
 	return project;
 }
+
 function initCategories() {// Filtrage des projets
 	const filterSet = new Set(); // Utilisation d'un objet Set pour stocker les filtres uniques
 	const filters = document.querySelectorAll(".filtres div");
@@ -107,6 +97,7 @@ const modalElements = document.querySelectorAll(".js-modal");
 let activeModal = null; // Variable pour stocker le modal actif
 const modal = document.querySelector(".modal");
 function openModal(event) {// Fonction pour ouvrir un modal
+	event.preventDefault(); // Éviter le rafraîchissement de la page
 	const targetModalId = event.currentTarget.getAttribute("href").substring(1); // Extrait l'ID du modal à partir de l'attribut href du lien déclencheur
 	const modalElement = document.getElementById(targetModalId); // Trouve l'élément modal correspondant à l'ID
 	if (modalElement) {// Si l'élément modal existe
@@ -139,6 +130,9 @@ modalElements.forEach((element) => {// Attache l'écouteur d'événements «clic
 function createProjectElement(element) {//Générer des éléments HTML pour afficher les projets dans la modale
 	const projectModale = document.createElement("figure");
 	projectModale.classList.add("project");
+
+	// Utilisation de l'ID du projet comme ID de l'élément
+    projectModale.id = `project-${element.id}`;
 	
 	projectModale.setAttribute("data-category", element.category);// l'objet element a une propriété category qui elle-même a une propriété name.
 	const img = document.createElement("img");
@@ -175,9 +169,10 @@ async function handleTrashClick(projectId, event) {//Gestion de la corbeille
 					throw new Error("Erreur de requête réseau");
 				}
 				// Supprimer l'élément du DOM
-				const projectElement = document.querySelector(`[data-category="${projectId}"]`);
+				const projectElement = document.getElementById(`project-${projectId}`);
 				if (projectElement) {
 					projectElement.remove();
+					console.log(projectElement)
 				  }
 			} catch (error) {
 				console.error(error);
@@ -262,13 +257,22 @@ const handleSubmit = async (event) => {//Soumission du formulaire
       throw new Error("Erreur de requête réseau");
     }
 	const element = await response.json();
-	const gallery = document.querySelector(".gallery");
-    const newProjectElement = createProjectElement(element);
-    gallery.appendChild(newProjectElement);
+	
+	    // Ajout à la galerie
+		const gallery = document.querySelector(".gallery");
+		const project = createProject(element);
+		gallery.appendChild(project);
+	
+		// Ajout à la modale
+		const galleryModale = document.querySelector(".project-modale");
+		const projectModale = createProjectElement(element);
+		galleryModale.appendChild(projectModale);
+	
 	// Effacer les valeurs du formulaire après l'ajout réussi
 	titleInput.value = "";
 	fileInput.value = "";
 	categorySelect.value = "";
+	closeModal()
 
   } catch (error) {
     console.error(error);
