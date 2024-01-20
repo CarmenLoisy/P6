@@ -38,10 +38,12 @@ function createProject(element) {//Générer des éléments HTML pour afficher l
 	project.appendChild(img); // Attachement des éléments au DOM
 	project.appendChild(imgTitle);
 	project.classList.add("project"); // Ajout de classes
-	project.setAttribute("data-category", element.category); // l'objet element a une propriété category qui elle-même a une propriété name.
-	return project;
+	
+// Définir l'attribut name 
+if (element.category && element.category.name) {
+    project.setAttribute("data-category", element.category.name);
+  }	return project;	
 }
-
 function initCategories() {// Filtrage des projets
 	const filterSet = new Set(); // Utilisation d'un objet Set pour stocker les filtres uniques
 	const filters = document.querySelectorAll(".filtres div");
@@ -134,8 +136,9 @@ function createProjectElement(element) {//Générer des éléments HTML pour aff
 	// Utilisation de l'ID du projet comme ID de l'élément
     projectModale.id = `project-${element.id}`;
 	
-	projectModale.setAttribute("data-category", element.category);// l'objet element a une propriété category qui elle-même a une propriété name.
-	const img = document.createElement("img");
+	if (element.category && element.category.name) {//Définir l'attribut name 
+		projectModale.setAttribute("data-category", element.category.name);
+	  }	const img = document.createElement("img");
 	img.src = element.imageUrl; // Ajout d'attribut
 	projectModale.appendChild(img);
 
@@ -272,8 +275,8 @@ const handleSubmit = async (event) => {//Soumission du formulaire
 	titleInput.value = "";
 	fileInput.value = "";
 	categorySelect.value = "";
+	main();
 	closeModal()
-
   } catch (error) {
     console.error(error);
   }
