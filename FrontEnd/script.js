@@ -29,7 +29,8 @@ async function main() {//Affichage des données dans...
 	}
 }
 function createProject(element) {//Générer des éléments HTML pour afficher les projets dans galerie
-	const project = document.createElement("figure");//
+	const project = document.createElement("figure");
+	project.setAttribute("id", `gallery_${element.id}`);
 	const img = document.createElement("img");
     img.setAttribute("alt", element.title); // Utiliser la valeur de l'élément actuel
 	const imgTitle = document.createElement("figcaption");//
@@ -173,10 +174,16 @@ async function handleTrashClick(projectId, event) {//Gestion de la corbeille
 				}
 				// Supprimer l'élément du DOM
 				const projectElement = document.getElementById(`project-${projectId}`);
+				console.log(projectElement)
 				if (projectElement) {
 					projectElement.remove();
-					console.log(projectElement)
 				  }
+				  const projectElementGallery = document.getElementById(`gallery_${projectId}`
+				);
+				if (projectElementGallery) {
+					projectElementGallery.remove();
+				}
+				closeModal();
 			} catch (error) {
 				console.error(error);
 			}
@@ -260,7 +267,9 @@ const handleSubmit = async (event) => {//Soumission du formulaire
       throw new Error("Erreur de requête réseau");
     }
 	const element = await response.json();
-	
+	element.category = {
+		name: categorySelect.options[categorySelect.selectedIndex].text,
+	};
 	    // Ajout à la galerie
 		const gallery = document.querySelector(".gallery");
 		const project = createProject(element);
@@ -273,10 +282,18 @@ const handleSubmit = async (event) => {//Soumission du formulaire
 	
 	// Effacer les valeurs du formulaire après l'ajout réussi
 	titleInput.value = "";
-	fileInput.value = "";
+	fileInput.value = null;
 	categorySelect.value = "";
-	main();
+
+	document.querySelector(".uploaded-photo").remove();
+	document.querySelector(".button3").style.display = "block";
+	document.querySelector(".fa-image").style.display = "block";
+	document.querySelector(".instruction").style.display = "block";
+	document.querySelector(".modal-2").style.display = "none";
+	document.querySelector(".modal-1").style.display = "flex";
+	
 	closeModal()
+
   } catch (error) {
     console.error(error);
   }
